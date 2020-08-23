@@ -1,8 +1,8 @@
 ***INSTALL***
 
-Install tkinter
+Create a Datos.csv files and put it in the directory: "organizador de pedidos/python/"
 
-Download python and run
+Download python, install tkinter and run
 
 ```python
 python GUI.py
