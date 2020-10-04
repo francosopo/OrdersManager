@@ -1,11 +1,10 @@
-import Arbol as A
-import Cliente as C
-import Cola as c
-import minHeap as h
+import sqlite3
 import time as t
 import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox as msg
+
+import Cliente as C
 
 fechaDeHoy = t.localtime()
 
@@ -13,42 +12,14 @@ diaActual = fechaDeHoy[2]
 mesActual = fechaDeHoy[1]
 anoActual = fechaDeHoy[0]
 
-prioridadActual = anoActual*10000+mesActual*100+diaActual
 
-archivo = open("Datos.csv", "r+")
-lineas = archivo.readlines()
-archivo.close()
-arbol=A.Arbol(C.Cliente("N",0,0,"0-0-0","None"),None,None)
-colaDePrioridad = h.minHeap()
-if lineas == []:
-    pass
-else:
-    #leer las lineas del archivo, construir el arbol y la cola de prioridad.
-    for linea in lineas:
-        if linea != "\n":
-            datos = linea.split(",")
-            nombre= datos[0]
-            cantidad = int(datos[1])
-            precio = int(datos[2])
-            fechaDeEntrega=datos[3]
-            modoDePago = datos[4]
-            if nombre != "N":
-                cliente= C.Cliente(nombre,cantidad,precio,fechaDeEntrega,modoDePago)
-                arbol.agregar(cliente)
-                colaDePrioridad.insertar(cliente)
 
-#Con las lineas siguientes, se tienen los clientes para los cuales hay pedidos desde hoy en adelante en la cola de
-#prioridad
-while colaDePrioridad.getNumElementos() > 0 and prioridadActual>colaDePrioridad.top().getPrioridad():
-    print(prioridadActual, "Prioridad Cliente: ", colaDePrioridad.top().getPrioridad())
-    colaDePrioridad.extraer()
-#fin comentario.
+
 
 class Aplicacion:
     def __init__(self,ventana):
         self.__ventana = ventana
-
-        #tamaño de la ventana
+        self.__conection = sqlite3.connect('database.db')
         self.__ventana.geometry("400x200")
         
         #titulo de la ventana
@@ -177,7 +148,7 @@ class Aplicacion:
         boton.pack()
 
     def agregar(self):
-        cliente = C.Cliente(self.__Entry[0].get(),self.__Entry[1].get(),self.__Entry[2].get(),self.__Entry[3].get(),self.__Entry[4].get())
+
         try:
             if cliente.getPrioridad() >= prioridadActual:
                 arbol.agregar(cliente)
@@ -317,5 +288,5 @@ if msg.askyesno("Salir", "¿Quiere guardar los datos?"):
     if resultadoBuscar[0]:
         arbol.eliminar(None,"N")
     app.guardar()
-        
+
 
