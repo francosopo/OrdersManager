@@ -16,13 +16,13 @@ class TestApplication(unittest.TestCase):
 
     def test_AgregarClienteEfectivo(self):
         self.__cliente = Cliente.Cliente(self.__nombreCliente,self.__apellidoCliente, self.__cantidad, self.__precio, self.__fechaDeEntrega, "efectivo")
-        self.__cliente.agregar()
+        self.assertTrue(self.__cliente.agregar())
         name = self.__cliente.getCursor().execute("SELECT nombre FROM pedidos WHERE nombre=?", [self.__nombreCliente]).fetchone()[0]
         self.assertEqual(self.__nombreCliente, name)
 
     def test_AgregarClienteTarjeta(self):
         self.__cliente = Cliente.Cliente(self.__nombreCliente, self.__apellidoCliente, self.__cantidad, self.__precio, self.__fechaDeEntrega, 'credito')
-        self.__cliente.agregar()
+        self.assertTrue(self.__cliente.agregar())
         name = self.__cliente.getCursor().execute("SELECT nombre FROM pedidos WHERE nombre = ?", [self.__nombreCliente]).fetchone()[0]
         self.assertEqual(self.__nombreCliente, name)
 
@@ -39,3 +39,9 @@ class TestApplication(unittest.TestCase):
         self.__cliente.eliminar(self.__nombreCliente, self.__apellidoCliente)
         resultado = self.__cliente.buscar(self.__nombreCliente, self.__apellidoCliente)
         self.assertIsNone(resultado)
+
+    def test_AgregarDosVecesMismoCliente(self):
+        self.__cliente = Cliente.Cliente(self.__nombreCliente, self.__apellidoCliente, self.__cantidad, self.__precio, self.__fechaDeEntrega, 'efectivo')
+        self.assertTrue(self.__cliente.agregar())
+        self.assertFalse(self.__cliente.agregar())
+

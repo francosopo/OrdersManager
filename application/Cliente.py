@@ -1,4 +1,6 @@
 import sqlite3
+from . import ApplicationException
+
 class Cliente:
     def __init__(self, nombre, apellido, cantidad, precio, fecha_de_entrega, modo_de_pago):
         self.__nombre = nombre
@@ -12,15 +14,23 @@ class Cliente:
 
     def agregar(self):
         id = 0
-        self.__cursor.execute("SELECT id FROM pedidos ORDER BY id DESC")
+        result = None
         try:
-            self.__cursor.fetchone()
-            id = self.__cursor[0]['id']+1
-        except:
+            self.__cursor.execute("SELECT id, nombre, apellido FROM pedidos ORDER BY id DESC")
+            result = self.__cursor.fetchone()
+            id = result[0]+1
+        except :
             id = 1
         if id:
-            self.__cursor.execute("INSERT INTO pedidos VALUES(?,?,?,?,?,?,?)", [id,self.__nombre, self.__apellido, self.__cantidad, self.__precio, self.__fechaDeEntrega,self.__modoDePago])
-            self.__connection.commit()
+            try:
+                if result is not None and self.__nombre == result[1] and self.__apellido == result[2]:
+                    raise ApplicationException.DuplicatedValue(self.__nombre, self.__apellido)
+                self.__cursor.execute("INSERT INTO pedidos VALUES(?,?,?,?,?,?,?)", [id,self.__nombre, self.__apellido, self.__cantidad, self.__precio, self.__fechaDeEntrega,self.__modoDePago])
+                self.__connection.commit()
+                return True
+            except:
+                return False
+
 
     def getCursor(self):
         return self.__cursor
