@@ -30,8 +30,21 @@ class Cliente:
         self.__connection.commit()
 
     def buscar(self, nombreCliente, apellidoCliente):
-        self.__cursor.execute("SELECT nombre, apellido FROM pedidos WHERE nombre = ? AND apellido=?", [nombreCliente,apellidoCliente])
-        return self.__cursor.fetchone()
+
+        result = None
+        try:
+            self.__cursor.execute("SELECT nombre, apellido FROM pedidos WHERE nombre = ? AND apellido=?",
+                                  [nombreCliente, apellidoCliente])
+            result = self.__cursor.fetchone()
+        except sqlite3.OperationalError:
+            return None
+        return result
+
+    def eliminar(self, nombreCliente, apellidoCliente):
+        self.__cursor.execute("DELETE FROM pedidos WHERE nombre = ? AND apellido = ?", [nombreCliente,apellidoCliente])
+        self.__connection.commit()
+        return self.buscar(nombreCliente, apellidoCliente)
+
 
 
 

@@ -32,3 +32,10 @@ class TestApplication(unittest.TestCase):
         result = self.__cliente.buscar(self.__nombreCliente, self.__apellidoCliente)
         self.assertEqual(self.__nombreCliente, result[0])
         self.assertEqual(self.__apellidoCliente, result[1])
+
+    def test_EliminarCliente(self):
+        self.__cliente = Cliente.Cliente(self.__nombreCliente, self.__apellidoCliente, self.__cantidad, self.__precio, self.__fechaDeEntrega,'efectivo')
+        self.__cliente.agregar()
+        self.__cliente.eliminar(self.__nombreCliente, self.__apellidoCliente)
+        resultado = self.__cliente.buscar(self.__nombreCliente, self.__apellidoCliente)
+        self.assertIsNone(resultado)
